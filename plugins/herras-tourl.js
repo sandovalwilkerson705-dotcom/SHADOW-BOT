@@ -4,10 +4,6 @@ import { fileTypeFromBuffer } from 'file-type'
 
 const UPLOAD_ENDPOINT = 'https://api.kirito.my/api/upload'
 
-// Emoji y canal de respuesta (puedes personalizar)
-const emoji = '⚡'
-const rcanal = null
-
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes) || bytes === 0) return '0 B'
   const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
@@ -49,9 +45,8 @@ async function uploadToKirito(buffer, opts = {}) {
 let handler = async (m, { conn, usedPrefix, command }) => {
   const q = m.quoted ? (m.quoted.msg || m.quoted) : m
   const mimeInfo = (q.mimetype || q.mediaType || q.mtype || '').toString().toLowerCase()
-
   if (!/image|video|audio|sticker|document/.test(mimeInfo)) {
-    await conn.reply(m.chat, `${emoji} Responde a una imagen, video o audio para subirlo.`, m, rcanal)
+    await conn.reply(m.chat, `${emoji} Responde a una imagen, video, audio para subirlo.`, m, rcanal)
     return
   }
 
@@ -61,14 +56,14 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     return
   }
 
-  const MAX_BYTES = 50 * 1024 * 1024 // límite real de la API
+  const MAX_BYTES = 20 * 1024 * 1024
   if (buffer.length > MAX_BYTES) {
     await conn.reply(m.chat, `Archivo demasiado grande (${formatBytes(buffer.length)}). Máximo: ${formatBytes(MAX_BYTES)}.`, m, rcanal)
     return
   }
 
   const typeInfo = await fileTypeFromBuffer(buffer).catch(() => null) || {}
-  const ext = (typeInfo.ext || (mimeInfo.includes('/') ? mimeInfo.split('/')[1] : null) || 'bin').toLowerCase()
+  const ext = (typeInfo.ext || mimeInfo.split('/')[1] || 'bin').toLowerCase()
   const mime = (typeInfo.mime || mimeInfo || 'application/octet-stream').toLowerCase()
   const fileName = `${crypto.randomBytes(6).toString('hex')}.${ext}`
 
@@ -89,7 +84,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
       status: result.status || 'OK'
     }
 
-    let txt = `*乂 S H A D O W - U P L O A D 乂*\n\n`
+    let txt = `*乂 K I R I T O - U P L O A D 乂*\n\n`
     txt += `*» URL:* ${data.url}\n`
     txt += `*» Tipo:* ${data.tipo}\n`
     txt += `*» Tamaño:* ${data.tamaño}\n`
@@ -103,9 +98,8 @@ let handler = async (m, { conn, usedPrefix, command }) => {
   }
 }
 
-// Comando principal
-handler.help = ['tourl <imagen/video>']
+handler.help = ['kirito <imagen/video>']
 handler.tags = ['tools']
-handler.command = ['tourl']
+handler.command = ['kiritourl', 'tourl3', 'kirito']
 
 export default handler
