@@ -10,6 +10,7 @@ if (user === conn.user.jid) return conn.reply(m.chat, `ꕥ No puedo eliminar el 
 if (user === ownerGroup) return conn.reply(m.chat, `ꕥ No puedo eliminar al propietario del grupo.`, m)
 if (user === ownerBot) return conn.reply(m.chat, `ꕥ No puedo eliminar al propietario del bot.`, m)
 await conn.groupParticipantsUpdate(m.chat, [user], 'remove')
+await conn.reply(m.chat, `🎄⛄ *Las sombras han expulsado a* @${user.split('@')[0]} ❄️\n\n✨ Ja... eso le pasa a los que no obedecen las reglas del Reino.\n🌌 ¿Quién más desea acompañarlo en la fría oscuridad navideña? 🎅`, m, { mentions: [user] })
 } catch (e) {
 conn.reply(m.chat, `⚠︎ Se ha producido un problema.\n> Usa *${usedPrefix}report* para informarlo.\n\n${e.message}`, m)
 }}
